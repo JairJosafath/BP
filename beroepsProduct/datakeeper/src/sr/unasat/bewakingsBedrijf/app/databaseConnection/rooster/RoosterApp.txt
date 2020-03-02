@@ -1,0 +1,232 @@
+package sr.unasat.bewakingsBedrijf.app.databaseConnection.rooster;
+
+import sr.unasat.bewakingsBedrijf.app.databaseConnection.bewaker.Bewaker;
+import sr.unasat.bewakingsBedrijf.app.databaseConnection.bewaker.BewakerDatabase;
+import sr.unasat.bewakingsBedrijf.app.databaseConnection.post.Post;
+import sr.unasat.bewakingsBedrijf.app.databaseConnection.post.PostDatabase;
+
+import java.util.Scanner;
+
+/**
+ * Created by Jair on 5/16/2016.
+ */
+public class RoosterApp {
+
+    Scanner userInput= new Scanner(System.in);
+    private RoosterDatabase roosterDatabase =null;
+    Bewaker bewaker= new Bewaker();
+    Post post = new Post();
+
+    BewakerDatabase bewakerDatabase= new BewakerDatabase();
+    PostDatabase postDatabase= new PostDatabase();
+
+
+    public void startApp(RoosterApp roosterApp) {
+
+        // Er is een variabele nodig om te stoppen met de applicatie
+        boolean stoppen = false;
+        // Er is een selectie variabele nodig om de selectie van de gebruiker te onthouden
+        int selectie = 0;
+        // De Scanner instantie is nodig om system input te lezen.
+        userInput = new Scanner(System.in);
+
+        while(stoppen == false){
+            // Print het menu
+            roosterApp.printMenu();
+
+            // Wacht tot de gebruiker een selectie heeft gemaakt
+            System.out.print("Selectie : ");
+            selectie = userInput.nextInt(); // getting a String value
+
+            switch(selectie){
+                case 0:
+                    // Stop de applicatie door de while loop te stoppen
+                    stoppen = true;
+                    roosterApp.stoppen();
+                    break;
+                case 1:
+                    roosterApp.doeFullSelectStatement();
+                    break;
+                case 2:
+                    roosterApp.doeSelectStatement();
+                    break;
+                case 3:
+                    roosterApp.doeInsertStatement();
+                    break;
+                case 4:
+                    roosterApp.doeDeleteStatement();
+                    break;
+                case 5:
+                    roosterApp.doeUpdateStatement();
+                    break;
+
+                default:
+            }
+        }
+    }
+
+    public void printMenu() {
+        System.out.println("................................");
+        System.out.println("Mijn eerste Database Applicatie.");
+        System.out.println("Type 0 om te stoppen.");
+        System.out.println("Type 1 voor full select statement.");
+        System.out.println("Type 2 voor select statement.");
+        System.out.println("Type 3 voor insert statement.");
+        System.out.println("Type 4 voor delete statement.");
+        System.out.println("Type 5 voor update statement.");
+
+
+        System.out.println("................................");
+    }
+
+    public void doeFullSelectStatement() {
+
+
+       if (roosterDatabase == null){
+            roosterDatabase = new RoosterDatabase();
+        }
+
+        if (!roosterDatabase.isInitialised()){
+            roosterDatabase.initialiseer();
+        }
+
+        if (roosterDatabase.isInitialised()){
+            roosterDatabase.selectAll();
+        }
+    }
+
+    public void doeSelectStatement() {
+
+        System.out.print("Tik id in van record : ");
+        int record =  userInput.nextInt(); // getting a int value
+
+        if (roosterDatabase == null){
+            roosterDatabase = new RoosterDatabase();
+        }
+
+        if (!roosterDatabase.isInitialised()){
+            roosterDatabase.initialiseer();
+        }
+
+        if (roosterDatabase.isInitialised()){
+            roosterDatabase.selectRooster(record);
+        }
+    }
+
+    public void doeInsertStatement() {
+
+        Rooster rooster = new Rooster();
+
+        System.out.print("Tik de waarde van 'dag' : ");
+        String dag = userInput.next();
+        rooster.setDag(dag);
+
+        System.out.print("Tik de waarde van 'tijd' : ");
+        String tijd = userInput.next();
+        rooster.setTijd(tijd);
+
+        System.out.println("Tik de id van de bewaker : ");
+        rooster.setBewaker_fk(userInput.nextInt());
+
+        System.out.println("Tik de id in van de post : ");
+        rooster.setPost_fk(userInput.nextInt());
+
+        if (roosterDatabase == null){
+            roosterDatabase = new RoosterDatabase();
+        }
+
+        if (!roosterDatabase.isInitialised()){
+            roosterDatabase.initialiseer();
+        }
+
+        if (roosterDatabase.isInitialised()){
+            roosterDatabase.insertRooster(rooster);
+        }
+
+    }
+
+    public void doeDeleteStatement() {
+
+        System.out.print("Tik id in van Rooster : ");
+        int roosterid = userInput.nextInt();
+
+        if (roosterDatabase == null){
+            roosterDatabase = new RoosterDatabase();
+        }
+
+        if (!roosterDatabase.isInitialised()){
+            roosterDatabase.initialiseer();
+        }
+
+        if (roosterDatabase.isInitialised()){
+            roosterDatabase.deleteRooster(roosterid);
+        }
+    }
+
+    public void doeUpdateStatement() {
+
+        System.out.print("Tik id in van record : ");
+        int roosterid = userInput.nextInt(); // getting a int value
+        Rooster rooster = null;
+
+        // Haal de student.Student op
+        // student.Student database instantie is alleen 1 keer nodig
+        if (roosterDatabase == null){
+            roosterDatabase = new RoosterDatabase();
+        }
+
+        // Initialiseer de studentDatabase alleen als het moet
+        if (!roosterDatabase.isInitialised()){
+            roosterDatabase.initialiseer();
+        }
+
+        // Alleen als de studenten database is geinitialiseerd dan verder
+        if (roosterDatabase.isInitialised()){
+            rooster = roosterDatabase.selectRooster(roosterid);
+        }
+
+        rooster.setId(roosterid);
+
+        if (rooster != null){
+            System.out.println("Type 1 voor dag.");
+            System.out.println("Type 2 voor shift.");
+
+            int column = userInput.nextInt(); // getting a int value
+
+            switch(column){
+                case 1:
+                    System.out.print("Tik de nieuwe waarde van 'dag' : ");
+                    String dag = userInput.next();
+                    rooster.setDag(dag);
+                    break;
+                case 2:
+                    System.out.print("Tik de nieuwe waarde van 'shift' : ");
+                    String tijd = userInput.next();
+                    rooster.setTijd(tijd);
+                    break;
+                case 3:
+                    System.out.println("bewakerFK");
+                    rooster.setBewaker_fk(userInput.nextInt());
+                    break;
+                case 4:
+                    System.out.println("postFK");
+                    rooster.setPost_fk(userInput.nextInt());
+                default:
+            }
+
+            // Alleen als de studenten database is geinitialiseerd dan verder
+            if (roosterDatabase.isInitialised()){
+                roosterDatabase.updateRooster(rooster);
+            }
+        }
+    }
+
+    public void stoppen() {
+        if (roosterDatabase != null){
+            if (roosterDatabase.isInitialised()){
+                roosterDatabase.terminate();
+            }
+        }
+    }
+
+}

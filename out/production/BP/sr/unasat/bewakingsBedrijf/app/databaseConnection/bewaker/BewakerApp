@@ -1,0 +1,238 @@
+package sr.unasat.bewakingsBedrijf.app.databaseConnection.bewaker;
+
+import java.util.Scanner;
+
+/**
+ * Created by Jair on 5/16/2016.
+ */
+public class BewakerApp {
+
+    Scanner userInput= new Scanner(System.in);
+    private BewakerDatabase bewakerDatabase= null;
+
+    public void startApp(BewakerApp bewakerApp) {
+
+        // Er is een variabele nodig om te stoppen met de applicatie
+        boolean stoppen = false;
+        // Er is een selectie variabele nodig om de selectie van de gebruiker te onthouden
+        int selectie = 0;
+        // De Scanner instantie is nodig om system input te lezen.
+        userInput = new Scanner(System.in);
+
+        while(stoppen == false){
+            // Print het menu
+            bewakerApp.printMenu();
+
+            // Wacht tot de gebruiker een selectie heeft gemaakt
+            System.out.print("Selectie : ");
+            selectie = userInput.nextInt(); // getting a String value
+
+            switch(selectie){
+                case 0:
+                    // Stop de applicatie door de while loop te stoppen
+                    stoppen = true;
+                    bewakerApp.stoppen();
+                    break;
+                case 1:
+                    bewakerApp.doeFullSelectStatement();
+                    break;
+                case 2:
+                    bewakerApp.doeSelectStatement();
+                    break;
+                case 3:
+                    bewakerApp.doeInsertStatement();
+                    break;
+                case 4:
+                    bewakerApp.doeDeleteStatement();
+                    break;
+               case 5:
+                   bewakerApp.doeUpdateStatement();
+                   break;
+
+                default:
+            }
+        }
+    }
+
+    public void printMenu() {
+        System.out.println("................................");
+        System.out.println("Mijn eerste Database Applicatie.");
+        System.out.println("Type 0 om te stoppen.");
+        System.out.println("Type 1 voor full select statement.");
+        System.out.println("Type 2 voor select statement.");
+        System.out.println("Type 3 voor insert statement.");
+        System.out.println("Type 4 voor delete statement.");
+        System.out.println("Type 5 voor update statement.");
+
+
+        System.out.println("................................");
+    }
+
+    public void doeFullSelectStatement() {
+
+
+        if (bewakerDatabase == null){
+            bewakerDatabase = new BewakerDatabase();
+        }
+
+        if (!bewakerDatabase.isInitialised()){
+            bewakerDatabase.initialiseer();
+        }
+
+        if (bewakerDatabase.isInitialised()){
+            bewakerDatabase.selectAll();
+        }
+    }
+
+    public void doeSelectStatement() {
+
+        System.out.print("Tik id in van record : ");
+        int record =  userInput.nextInt(); // getting a int value
+
+        if (bewakerDatabase == null){
+            bewakerDatabase = new BewakerDatabase();
+        }
+
+        if (!bewakerDatabase.isInitialised()){
+            bewakerDatabase.initialiseer();
+        }
+
+        if (bewakerDatabase.isInitialised()){
+            bewakerDatabase.selectBewaker(record);
+        }
+    }
+
+    public void doeInsertStatement() {
+
+        Bewaker bewaker = new Bewaker();
+
+        System.out.print("Tik de waarde van 'voornaam' : ");
+        String voornaam = userInput.next();
+       // bewaker.setBewaker_voornaam(voornaam);
+
+        System.out.print("Tik de waarde van 'naam' : ");
+        String naam = userInput.next();
+        bewaker.setBewaker_naam(naam);
+
+        System.out.print("Tik de waarde van 'adres' : ");
+        String adres = userInput.next();
+        bewaker.setBewaker_adres(adres);
+
+        System.out.print("Tik de waarde van 'mail' : ");
+        String mail = userInput.next();
+        bewaker.setBewaker_mail(mail);
+
+        System.out.println("Tik de waarde van 'telefoonnummer' : ");
+        bewaker.setBewaker_telefoon(userInput.next());
+
+
+        if (bewakerDatabase == null){
+            bewakerDatabase = new BewakerDatabase();
+        }
+
+        if (!bewakerDatabase.isInitialised()){
+            bewakerDatabase.initialiseer();
+        }
+
+        if (bewakerDatabase.isInitialised()){
+            bewakerDatabase.insertBewaker(bewaker);
+        }
+
+    }
+
+    public void doeDeleteStatement() {
+
+        System.out.print("Tik id in van bewaker : ");
+        int bewakerid = userInput.nextInt();
+
+        if (bewakerDatabase == null){
+            bewakerDatabase = new BewakerDatabase();
+        }
+
+        if (!bewakerDatabase.isInitialised()){
+            bewakerDatabase.initialiseer();
+        }
+
+        if (bewakerDatabase.isInitialised()){
+            bewakerDatabase.deleteBewaker(bewakerid);
+        }
+    }
+
+    public void doeUpdateStatement() {
+
+        System.out.print("Tik id in van record : ");
+        int bewakerid = userInput.nextInt(); // getting a int value
+        Bewaker bewaker = null;
+
+        // Haal de student.Student op
+        // student.Student database instantie is alleen 1 keer nodig
+        if (bewakerDatabase == null){
+            bewakerDatabase = new BewakerDatabase();
+        }
+
+        // Initialiseer de studentDatabase alleen als het moet
+        if (!bewakerDatabase.isInitialised()){
+            bewakerDatabase.initialiseer();
+        }
+
+        // Alleen als de studenten database is geinitialiseerd dan verder
+        if (bewakerDatabase.isInitialised()){
+            bewaker = bewakerDatabase.selectBewaker(bewakerid);
+        }
+
+        bewaker.setId(bewakerid);
+
+        if (bewaker != null){
+            System.out.println("Type 1 voor voornaam.");
+            System.out.println("Type 2 voor naam.");
+            System.out.println("Type 3 voor adres.");
+            System.out.println("Type 4 voor mail.");
+            System.out.println("Type 5 voor telefoon nummer.");
+            System.out.print("Selectie : ");
+            int column = userInput.nextInt(); // getting a int value
+
+            switch(column){
+                case 1:
+                    System.out.print("Tik de nieuwe waarde van 'voornaam' : ");
+                    String voornaam = userInput.next();
+                    bewaker.setBewaker_voornaam(voornaam);
+                    break;
+                case 2:
+                    System.out.print("Tik de nieuwe waarde van 'naam' : ");
+                    String naam = userInput.next();
+                    bewaker.setBewaker_naam(naam);
+                    break;
+                case 3:
+                    System.out.print("Tik de nieuwe waarde van 'adres' : ");
+                    String adres = userInput.next();
+                    bewaker.setBewaker_adres(adres);
+                    break;
+                case 4:
+                    System.out.print("Tik de nieuwe waarde van 'mail' : ");
+                    String mail = userInput.next();
+                    bewaker.setBewaker_mail(mail);
+                    break;
+                case 5:
+                    System.out.print("Tik de nieuwe waarde van 'telefoon nummer' : ");
+                    String  telefoon = userInput.next();
+                    bewaker.setBewaker_telefoon(telefoon);
+                    break;
+                default:
+            }
+
+            // Alleen als de studenten database is geinitialiseerd dan verder
+            if (bewakerDatabase.isInitialised()){
+                bewakerDatabase.updateBewaker(bewaker);
+            }
+        }
+    }
+
+    public void stoppen() {
+        if (bewakerDatabase != null){
+            if (bewakerDatabase.isInitialised()){
+                bewakerDatabase.terminate();
+            }
+        }
+    }
+
+}
